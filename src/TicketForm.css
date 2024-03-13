@@ -1,0 +1,27 @@
+/* TicketForm.css */
+
+.ant-form-item-label > label {
+    color: #5B5B5B; /* Change label color */
+  }
+  
+  .ant-form-vertical .ant-form-item {
+    margin-bottom: 24px; /* Adjust spacing between form items */
+  }
+  
+  .ant-upload-list-item {
+    background-color: #f4f4f4; /* Change background color of upload list */
+  }
+  
+  .ant-btn-primary {
+    background-color: #004d99; /* Customize primary button color */
+    border-color: #004d99; /* Customize primary button border */
+  }
+  
+  .ant-btn-primary:hover,
+  .ant-btn-primary:focus {
+    background-color: #003366; /* Darken button on hover/focus */
+    border-color: #003366;
+  }
+  
+  /* You can add more custom styles as needed */
+  
