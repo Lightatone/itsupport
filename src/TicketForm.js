@@ -2,12 +2,29 @@ import React from 'react';
 import { Form, Input, Button, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import './TicketForm.css';
+import axios from 'axios'; 
 
 const TicketForm = ({ onSubmit }) => {
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    onSubmit(values); // Pass the form values to a handler function
+  const onFinish = async (values) => {
+    // 假设你的API Endpoint是 https://your-api-endpoint/submitTicket
+    const apiUrl = 'https://your-api-endpoint/submitTicket';
+    try {
+      // 将文件列表转换成适合发送的格式
+      // 注意：这里假设服务器可以处理文件上传。如果不处理文件上传，可能需要其他方法处理文件
+      if(values.attachment) {
+        values.attachment = values.attachment.map(file => file.originFileObj);
+      }
+
+      // 发送POST请求到你的API
+      const response = await axios.post(apiUrl, values);
+      console.log('Submit success:', response.data);
+      message.success('Ticket submitted successfully!');
+    } catch (error) {
+      console.error('Submit failed:', error);
+      message.error('Ticket submission failed.');
+    }
   };
 
   const normFile = (e) => {

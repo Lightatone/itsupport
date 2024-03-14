@@ -43,44 +43,58 @@ app.get('/submitTicket/*', function(req, res) {
 /****************************
 * Example post method *
 ****************************/
+
 const AWS = require('aws-sdk');
 const ses = new AWS.SES({
     region: 'us-east-2', // 替换为AWS区域
 });
-app.post('/submitTicket', function(req, res) {
-  // 解析请求体中的数据
-  const { email, remotePCID, phoneExtension, description, attachment } = req.body;
-  
-  // 构建邮件内容
-  const emailParams = {
-      Source: 'it@itsupportdesks.com', // 发件人邮箱，必须是SES验证过的
-      Destination: {
-          ToAddresses: ['it@itsupportdesks.com'], // 接收邮件的邮箱
-      },
-      Message: {
-          Subject: {
-              Data: 'IT Support Ticket Submission'
-          },
-          Body: {
-              Text: {
-                  Data: `Email: ${email}\n RemotePC ID: ${remotePCID}\n Phone Extension: ${phoneExtension}\nDescription: ${description}`
-                  
-              }
-          }
-      }
-  };
 
-  // 使用SES发送邮件
-  ses.sendEmail(emailParams, function(err, data) {
-      if (err) {
-          console.error('Error sending email', err);
-          res.status(500).json({error: 'Failed to send email'});
-      } else {
-          console.log('Email sent:', data);
-          res.json({success: 'Email sent successfully'});
-      }
-  });
+app.post('/submitTicket', function(req, res) {
+    // 解析请求体中的数据
+    const { email, remotePCID, phoneExtension, description, attachment } = req.body;
+    
+    // 构建邮件内容
+    const emailParams = {
+        Source: 'itsupportdesks.com', // 发件人邮箱，必须是SES验证过的
+        Destination: {
+            ToAddresses: ['itsupportdesks.com'], // 接收邮件的邮箱
+        },
+        Message: {
+            Subject: {
+                Data: 'IT Support Ticket Submission'
+            },
+            Body: {
+                Text: {
+                    Data: `Email: ${email}\nRemotePC ID: ${remotePCID}\nPhone Extension: ${phoneExtension}\nDescription: ${description}`
+                    
+                }
+            }
+        }
+    };
+
+    // 使用SES发送邮件
+    ses.sendEmail(emailParams, function(err, data) {
+        if (err) {
+            console.error('Error sending email', err);
+            res.status(500).json({error: 'Failed to send email'});
+        } else {
+            console.log('Email sent:', data);
+            res.json({success: 'Email sent successfully'});
+        }
+    });
 });
+
+
+exports.handler = async (event) => {
+  try {
+    const data = await ses.sendEmail(emailParams).promise();
+    console.log('Email sent:', data);
+    return { statusCode: 200, body: 'Email sent' };
+  } catch (err) {
+    console.error('Email sending failed:', err);
+    return { statusCode: 500, body: 'Failed to send email' };
+  }
+};
 app.post('/submitTicket/*', function(req, res) {
   // Add your code here
   res.json({success: 'post call succeed!', url: req.url, body: req.body})

@@ -3,7 +3,7 @@
   "paths": {
     "/submitTicket": {
       "name": "/submitTicket",
-      "lambdaFunction": "sumbitTicket",
+      "lambdaFunction": "itsupportwebe74eee70",
       "permissions": {
         "setting": "open"
       }

@@ -1,6 +1,6 @@
 {
   "api": {
-    "apilambda1": {
+    "apicbe5bcfb": {
       "dependsOn": [
         {
           "attributes": [
@@ -8,58 +8,15 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "sumbitTicket"
+          "resourceName": "itsupportwebe74eee70"
         }
       ],
       "providerPlugin": "awscloudformation",
       "service": "API Gateway"
     }
   },
-  "auth": {
-    "itsupportweb": {
-      "dependsOn": [],
-      "frontendAuthConfig": {
-        "mfaConfiguration": "OFF",
-        "mfaTypes": [
-          "SMS"
-        ],
-        "passwordProtectionSettings": {
-          "passwordPolicyCharacters": [],
-          "passwordPolicyMinLength": 8
-        },
-        "signupAttributes": [
-          "EMAIL"
-        ],
-        "socialProviders": [],
-        "usernameAttributes": [],
-        "verificationMechanisms": [
-          "EMAIL"
-        ]
-      },
-      "providerPlugin": "awscloudformation",
-      "service": "Cognito",
-      "serviceType": "managed"
-    }
-  },
   "function": {
-    "itsupportwebebd7d0bb": {
-      "build": true,
-      "dependsOn": [],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "itsupportwebecd71f73": {
-      "build": true,
-      "dependsOn": [],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "sumbitTicket": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "ticketsupport": {
+    "itsupportwebe74eee70": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
