@@ -24,7 +24,7 @@ const App = () => {
             </Routes>
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>IT Support ©2023 Created with Ant Design</Footer>
+        <Footer style={{ textAlign: 'center' }}>IT Support</Footer>
       </Layout>
     </Router>
   );
