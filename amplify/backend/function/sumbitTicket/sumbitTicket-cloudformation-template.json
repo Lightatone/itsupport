@@ -18,8 +18,6 @@
         }
         
     
-    
-    
     },
     "Conditions": {
         "ShouldNotCreateEnvResources": {
@@ -51,13 +49,13 @@
             "FunctionName": {
                 "Fn::If": [
                     "ShouldNotCreateEnvResources",
-                    "itsupportwebecd71f73",
+                    "sumbitTicket",
                     {
 
                         "Fn::Join": [
                             "",
                             [
-                                "itsupportwebecd71f73",
+                                "sumbitTicket",
                                 "-",
                                 {
                                     "Ref": "env"
@@ -82,13 +80,13 @@
                 "RoleName": {
                     "Fn::If": [
                         "ShouldNotCreateEnvResources",
-                        "itsupportwebLambdaRole63c97148",
+                        "itsupportwebLambdaRole6873b72b",
                         {
 
                             "Fn::Join": [
                                 "",
                                 [
-                                    "itsupportwebLambdaRole63c97148",
+                                    "itsupportwebLambdaRole6873b72b",
                                     "-",
                                     {
                                         "Ref": "env"

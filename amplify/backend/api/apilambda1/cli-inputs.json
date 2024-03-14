@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/submitTicket": {
+      "name": "/submitTicket",
+      "lambdaFunction": "sumbitTicket",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

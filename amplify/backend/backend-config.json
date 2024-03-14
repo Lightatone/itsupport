@@ -1,6 +1,6 @@
 {
   "api": {
-    "api0d313a8a": {
+    "apilambda1": {
       "dependsOn": [
         {
           "attributes": [
@@ -8,7 +8,7 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "itsupportwebecd71f73"
+          "resourceName": "sumbitTicket"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -42,9 +42,25 @@
     }
   },
   "function": {
+    "itsupportwebebd7d0bb": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "itsupportwebecd71f73": {
       "build": true,
       "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "sumbitTicket": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "ticketsupport": {
+      "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
