@@ -7,6 +7,8 @@ See the License for the specific language governing permissions and limitations 
 */
 
 
+
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
@@ -20,15 +22,7 @@ app.use(awsServerlessExpressMiddleware.eventContext())
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*")
   res.header("Access-Control-Allow-Headers", "*")
-  res.header("Access-Control-Allow-Methods", "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT");
   next()
-});
-app.options('*', (req, res) => {
-  // 设置CORS响应头
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  res.sendStatus(200);
 });
 
 
@@ -50,22 +44,60 @@ app.get('/sumbit/*', function(req, res) {
 * Example post method *
 ****************************/
 
-app.post('/sumbit', function(req, res) {
-  // Add your code here
-  res.json({success: 'post call succeed!', url: req.url, body: req.body})
-  const formData = req.body; // 从请求体中获取表单数据
+// app.post('/sumbit', function(req, res) {
+//   // Add your code here
+//   res.json({success: 'post call succeed!', url: req.url, body: req.body})
+// });
+/******************************************************EMAIL */
+// 引入AWS SDK
+const AWS = require('aws-sdk');
 
-  sendEmail(formData, function(err, data) {
+// 设置区域
+AWS.config.update({region: 'us-east-2'}); // 根据你的SES配置调整区域
+
+// 创建SES服务对象
+const ses = new AWS.SES();
+
+// 修改或添加发送电子邮件的逻辑
+app.post('/submit', function(req, res) {
+  // 示例：获取请求体中的email信息
+  const { to, from, subject, body } = req.body;
+
+  // 定义邮件参数
+  var params = {
+    Destination: { /* required */
+      ToAddresses: [
+        to
+      ]
+    },
+    Message: { /* required */
+      Body: { /* required */
+        Text: {
+         Charset: "UTF-8",
+         Data: body
+        }
+       },
+       Subject: {
+        Charset: 'UTF-8',
+        Data: subject
+       }
+      },
+    Source: from, /* required */
+  };
+
+  // 调用SES发送邮件
+  ses.sendEmail(params, function(err, data) {
     if (err) {
-      console.error('Error sending email:', err);
-      res.status(500).json({error: 'Email could not be sent', details: err.message});
+      console.log(err, err.stack); // 错误日志
+      res.json({error: 'Email could not be sent', details: err});
     } else {
-      console.log('Email sent successfully:', data);
-      res.status(200).json({success: 'Email sent successfully', data: data.MessageId});
+      console.log(data); // 成功的响应
+      res.json({success: 'Email sent successfully', data});
     }
   });
 });
 
+/******************************************************EMAIL */
 app.post('/sumbit/*', function(req, res) {
   // Add your code here
   res.json({success: 'post call succeed!', url: req.url, body: req.body})
@@ -103,64 +135,13 @@ app.listen(3000, function() {
     console.log("App started")
 });
 
+
+
+
+
+
+
 // Export the app object. When executing the application local this does nothing. However,
 // to port it to AWS Lambda we will create a wrapper around that will load the app from
 // this file
 module.exports = app
-
-/*sumbit the email*/
-const AWS = require('aws-sdk');
-
-// 初始化AWS SES客户端
-const ses = new AWS.SES({
-    region: 'us-east-1' // 请根据你的SES配置调整区域
-});
-
-app.use(awsServerlessExpressMiddleware.eventContext());
-
-// 允许跨域请求
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
-  next();
-});
-
-// 发送电子邮件的函数
-function sendEmail(data, callback) {
-  const emailParams = {
-    Source: 'it@itsupportdesks.com', // 发件人，必须是SES中验证过的
-    Destination: {
-      ToAddresses:'it@itsupportdesks.com' // 收件人邮箱地址
-    },
-    Message: {
-      Subject: {
-        Data: 'Ticket Submission Confirmation' // 邮件主题
-      },
-      Body: {
-        Text: {
-          Data: `Your ticket has been submitted successfully. Details:\n\n${data.description}` // 邮件正文
-        }
-      }
-    }
-  };
-
-  ses.sendEmail(emailParams, callback);
-}
-
-// 修改post方法以发送电子邮件
-app.post('/submit', function(req, res) {
-  const formData = req.body; // 从请求体中获取表单数据
-
-  sendEmail(formData, function(err, data) {
-    if (err) {
-      console.log(err, err.stack); // 错误日志
-      res.json({error: 'Email could not be sent', details: err});
-    } else {
-      console.log(data); // 成功的响应
-      res.json({success: 'Email sent successfully', data});
-    }
-  });
-});
-
-
-module.exports = app;

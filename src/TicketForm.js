@@ -8,18 +8,34 @@ const TicketForm = ({ onSubmit }) => {
   const [form] = Form.useForm();
   
   const onFinish = async (values) => {
+  
     console.log("here are the values", values);
     // 使用axios发送POST请求到你的Lambda函数的API终端
+    // try {
+    //   const response = await axios.post('https://vca5r6zcoc.execute-api.us-east-2.amazonaws.com/staging/sumbit', values);
+    //   console.log('Success:', response.data);
+    //   message.success('Ticket submitted successfully!');
+    // } catch (error) {
+    //   console.error('Failed to submit ticket:', error);
+    //   message.error('Failed to submit the ticket. Please try again.');
+    // }
+     // 构建请求体，确保它包含发送邮件所需的字段
+     const emailData = {
+      to: 'shiyaofeng08@gmail.com', // 收件人地址
+      from: 'it@itsupportdesks.com', // 发件人地址，必须是在SES中验证过的
+      subject: 'Test Email from SES', // 邮件主题
+      body: 'Hello, this is a test email sent from AWS SES via Lambda.' // 邮件正文
+    };
+
     try {
-      const response = await axios.post('https://vca5r6zcoc.execute-api.us-east-2.amazonaws.com/staging/sumbit', values);
+      const response = await axios.post('https://vca5r6zcoc.execute-api.us-east-2.amazonaws.com/staging/sumbit', emailData);
       console.log('Success:', response.data);
-      message.success('Ticket submitted successfully!');
+      // 根据需要添加成功消息
     } catch (error) {
-      console.error('Failed to submit ticket:', error);
-      message.error('Failed to submit the ticket. Please try again.');
+      console.error('Failed to send email:', error);
+      // 根据需要添加失败消息
     }
     
-
   };
 
   const normFile = (e) => {
