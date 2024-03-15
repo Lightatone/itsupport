@@ -8,26 +8,17 @@ const TicketForm = ({ onSubmit }) => {
   const [form] = Form.useForm();
   
   const onFinish = async (values) => {
-    console.log("here is the values ", values)
-    // 假设你的API Endpoint是 https://your-api-endpoint/submitTicket
-    const apiUrl = 'https://zjmbi6bei9.execute-api.us-east-2.amazonaws.com/dev/submitTicket';
+    console.log("here are the values", values);
+    // 使用axios发送POST请求到你的Lambda函数的API终端
     try {
-      // 将文件列表转换成适合发送的格式
-      // 注意：这里假设服务器可以处理文件上传。如果不处理文件上传，可能需要其他方法处理文件
-      if(values.attachment) {
-        values.attachment = values.attachment.map(file => file.originFileObj);
-      }
-
-      // 发送POST请求到你的API
-      const response = await axios.post(apiUrl, values);
-      console.log('Submit success:', response.data);
+      const response = await axios.post('https://vca5r6zcoc.execute-api.us-east-2.amazonaws.com/staging/sumbit', values);
+      console.log('Success:', response.data);
       message.success('Ticket submitted successfully!');
     } catch (error) {
-      console.error('Submit failed:', error);
-      message.error('Ticket submission failed.');
+      console.error('Failed to submit ticket:', error);
+      message.error('Failed to submit the ticket. Please try again.');
     }
-    // 假设这是处理文件上传的后端API Endpoint
-    // const fileUploadUrl = 'https://your-api-endpoint/uploadFile';
+    
 
   };
 

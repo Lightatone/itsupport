@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/sumbit": {
+      "name": "/sumbit",
+      "lambdaFunction": "itsupportd7f7362d",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
