@@ -6,8 +6,9 @@ import axios from 'axios';
 
 const TicketForm = ({ onSubmit }) => {
   const [form] = Form.useForm();
-
+  
   const onFinish = async (values) => {
+    console.log("here is the values ", values)
     // 假设你的API Endpoint是 https://your-api-endpoint/submitTicket
     const apiUrl = 'https://798eodj4el.execute-api.us-east-2.amazonaws.com/staging/submitTicket';
     try {
@@ -25,6 +26,9 @@ const TicketForm = ({ onSubmit }) => {
       console.error('Submit failed:', error);
       message.error('Ticket submission failed.');
     }
+    // 假设这是处理文件上传的后端API Endpoint
+    // const fileUploadUrl = 'https://your-api-endpoint/uploadFile';
+
   };
 
   const normFile = (e) => {
@@ -32,6 +36,18 @@ const TicketForm = ({ onSubmit }) => {
       return e;
     }
     return e?.fileList;
+  };
+
+  const beforeUpload = (file) => {
+    const isDocOrPdf = file.type === 'application/pdf' || file.type === 'application/msword' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    if (!isDocOrPdf) {
+      message.error('You can only upload DOC or PDF file!');
+    }
+    const isLessThan5M = file.size / 1024 / 1024 < 10;
+    if (!isLessThan5M) {
+      message.error('File must be smaller than 10MB!');
+    }
+    return isLessThan5M && isDocOrPdf || Upload.LIST_IGNORE; // 返回false或Upload.LIST_IGNORE将停止上传，但Upload.LIST_IGNORE不会显示错误信息
   };
 
   return (
@@ -45,9 +61,17 @@ const TicketForm = ({ onSubmit }) => {
       </Form.Item>
 
       <Form.Item
-        label="RemotePC ID and Phone Extension"
+        label="RemotePC ID"
         name="remotePCID"
-        rules={[{ required: true, message: 'Please input your RemotePC ID and Phone Extension!' }]}
+        rules={[{ required: true, message: 'Please input your RemotePC ID!' }]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        label="Phone Extension"
+        name="phoneExtension"
+        rules={[{ required: true, message: 'Please input your Phone Extension!' }]}
       >
         <Input />
       </Form.Item>
@@ -62,11 +86,16 @@ const TicketForm = ({ onSubmit }) => {
 
       <Form.Item
         name="attachment"
-        label="Attachment (Optional)"
+        label="Attachment (Optional) PDF or Word, no more than 10MB"
         valuePropName="fileList"
         getValueFromEvent={normFile}
       >
-        <Upload name="logo" action="/upload.do" listType="picture">
+        <Upload
+          name="logo"
+          action="/upload.do"
+          listType="picture"
+          beforeUpload={beforeUpload} // 使用beforeUpload属性来限制文件类型
+        >
           <Button icon={<UploadOutlined />}>Click to upload</Button>
         </Upload>
       </Form.Item>

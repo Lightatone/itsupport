@@ -55,9 +55,9 @@ app.post('/submitTicket', function(req, res) {
     
     // 构建邮件内容
     const emailParams = {
-        Source: 'itsupportdesks.com', // 发件人邮箱，必须是SES验证过的
+        Source: 'it@itsupportdesks.com', // 发件人邮箱，必须是SES验证过的
         Destination: {
-            ToAddresses: ['itsupportdesks.com'], // 接收邮件的邮箱
+            ToAddresses: ['it@itsupportdesks.com'], // 接收邮件的邮箱
         },
         Message: {
             Subject: {
