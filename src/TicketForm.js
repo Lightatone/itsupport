@@ -10,7 +10,7 @@ const TicketForm = ({ onSubmit }) => {
   const onFinish = async (values) => {
     console.log("here is the values ", values)
     // 假设你的API Endpoint是 https://your-api-endpoint/submitTicket
-    const apiUrl = 'https://798eodj4el.execute-api.us-east-2.amazonaws.com/staging/submitTicket';
+    const apiUrl = 'https://zjmbi6bei9.execute-api.us-east-2.amazonaws.com/dev/submitTicket';
     try {
       // 将文件列表转换成适合发送的格式
       // 注意：这里假设服务器可以处理文件上传。如果不处理文件上传，可能需要其他方法处理文件
