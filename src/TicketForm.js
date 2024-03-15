@@ -21,7 +21,7 @@ const TicketForm = ({ onSubmit }) => {
     // }
      // 构建请求体，确保它包含发送邮件所需的字段
      const emailData = {
-      to: 'shiyaofeng08@gmail.com', // 收件人地址
+      to: 'it@itsupportdesks.com', // 收件人地址
       from: 'it@itsupportdesks.com', // 发件人地址，必须是在SES中验证过的
       subject: 'Test Email from SES', // 邮件主题
       body: 'Hello, this is a test email sent from AWS SES via Lambda.' // 邮件正文

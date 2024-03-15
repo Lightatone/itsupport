@@ -59,7 +59,7 @@ AWS.config.update({region: 'us-east-2'}); // 根据你的SES配置调整区域
 const ses = new AWS.SES();
 
 // 修改或添加发送电子邮件的逻辑
-app.post('/submit', function(req, res) {
+app.post('/sumbit', function(req, res) {
   // 示例：获取请求体中的email信息
   const { to, from, subject, body } = req.body;
 
