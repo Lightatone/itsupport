@@ -3,28 +3,35 @@ import { Form, Input, Button, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import './TicketForm.css';
 import axios from 'axios'; 
-import { uploadData  } from 'aws-amplify/storage';
+import { uploadData,getUrl  } from 'aws-amplify/storage';
+import {Storage } from 'aws-amplify';
 
 const TicketForm = ({ onSubmit }) => {
   const [form] = Form.useForm();
   
   const onFinish = async (values) => {
-    // let formData = { ...values };
-    // if (values.attachment && values.attachment.length > 0) {
-    //   console.log("result 22");
-    //   // have issue, can't upload the file
-    //   const uploadPromises = values.attachment.map(file =>
-    //     file.originFileObj ? handleUpload(file.originFileObj) : Promise.resolve('')
-    //   );
-    //   const fileUrls = await Promise.all(uploadPromises);
-    //   console.log("Here is ", fileUrls);
-    //   // 过滤掉空字符串，只保留成功上传的文件URL
-    //   formData.attachment = fileUrls.filter(url => url !== '');
-    // }
-    // console.log("result 22", formData);
+    let formData = { ...values };
+    if (values.attachment && values.attachment.length > 0) {
+      const uploadPromises = values.attachment.map(file =>
+        file.originFileObj ? handleUpload(file.originFileObj) : Promise.resolve('')
+      );
+      const filenames = await Promise.all(uploadPromises);
+      // console.log("here is the filename", filenames);
+      const urlPromises = filenames.map(filename => 
+        filename ? getUrl({ key: filename, options: { accessLevel: 'guest'} }) : Promise.resolve({ url: '' })
+      );
+       // 等待所有获取URL的promise完成
+      const urlsResults = await Promise.all(urlPromises);
+      // 提取URL，忽略空字符串
+      const fileUrls = urlsResults.map(result => result.url).filter(url => url !== '');
+      // 添加到formData
+      formData.attachment = fileUrls;
+    }
     const now = new Date();
     const ticketSupportID = `Ticket Support ID: ${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}`;
-    
+    // 假设formData.attachment是一个包含多个URL信息的数组
+    let attachmentURLs = formData.attachment.map(a => `${a.origin}${a.pathname}`).join('\n');
+
     const emailData = {
       to: 'it@itsupportdesks.com', // 收件人地址
       from: 'it@itsupportdesks.com', // 发件人地址，必须是在SES中验证过的.沙盒模式。
@@ -35,15 +42,15 @@ const TicketForm = ({ onSubmit }) => {
       Remote PC ID: ${values.remotePCID}
       Phone Extension: ${values.phoneExtension}
       Description: ${values.description}
-  
+      Attachment: ${attachmentURLs}
       Best regards,
       Your IT Support`
     };
-    console.log("Here is the email data", emailData)
     try {
       const response = await axios.post('https://vca5r6zcoc.execute-api.us-east-2.amazonaws.com/staging/sumbit', emailData);
-      console.log('Success:', response.data);
-      // 根据需要添加成功消息
+      message.success('Ticket submitted successfully');
+      // 清除表单
+      form.resetFields();
     } catch (error) {
       console.error('Failed to send email:', error);
       // 根据需要添加失败消息
@@ -66,9 +73,8 @@ const TicketForm = ({ onSubmit }) => {
   };
 
   const handleUpload = async (file) => {
-    console.log("here handle upload");
     try {
-      const result = await uploadData({
+      const uploadResult  = await uploadData({
         key: file.name,
         data: file,
         options: {
@@ -76,17 +82,28 @@ const TicketForm = ({ onSubmit }) => {
         }
       }).result;
       
-      console.log('Succeeded: ', result);
-      return result.url;
+      return uploadResult.key;
     } catch (error) {
       console.log('Error uploading file: ', error);
       return '';
     }
   };
 
-
+  const handleChange = async (info) => {
+  
+    // 如果上传状态是完成
+    if (info.file.status === 'done') {
+      // message.success(`${info.file.name} file uploaded successfully`);
+      // 可以在这里处理文件上传后的逻辑，比如获取上传后的URL
+    } else if (info.file.status === 'error') {
+      // message.error(`${info.file.name} file upload failed.`);
+      console.log(`${info.file.name} file upload failed.`);
+    }
+  
+    // 如果需要，这里也可以处理上传的进度或其他状态
+  };
+  
   const normFile =  (e) => {
-    console.log('Upload event:', e);
     if (Array.isArray(e)) {
       return e;
     }
@@ -156,3 +173,5 @@ const TicketForm = ({ onSubmit }) => {
 };
 
 export default TicketForm;
+
+

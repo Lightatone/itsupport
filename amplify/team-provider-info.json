@@ -13,7 +13,8 @@
     },
     "categories": {
       "auth": {
-        "itsupport2274d5ee": {}
+        "itsupport2274d5ee": {},
+        "userPoolGroups": {}
       },
       "function": {
         "itsupportd7f7362d": {

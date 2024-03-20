@@ -3,7 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import HomePage from './HomePage'; 
 import TicketForm from './TicketForm';
+import { Amplify } from 'aws-amplify';
+import amplifyconfig from './amplifyconfiguration.json';
 
+Amplify.configure(amplifyconfig);
 const { Header, Content, Footer } = Layout;
 
 const App = () => {
