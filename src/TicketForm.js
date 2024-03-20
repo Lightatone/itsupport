@@ -4,26 +4,24 @@ import { UploadOutlined } from '@ant-design/icons';
 import './TicketForm.css';
 import axios from 'axios'; 
 import { uploadData  } from 'aws-amplify/storage';
-import { Amplify } from 'aws-amplify';
-import awsconfig from './aws-exports';
-Amplify.configure(awsconfig);
 
 const TicketForm = ({ onSubmit }) => {
   const [form] = Form.useForm();
   
   const onFinish = async (values) => {
-    let formData = { ...values };
-    if (values.attachment && values.attachment.length > 0) {
-      console.log("result 22");
-      const uploadPromises = values.attachment.map(file =>
-        file.originFileObj ? handleUpload(file.originFileObj) : Promise.resolve('')
-      );
-      const fileUrls = await Promise.all(uploadPromises);
-      console.log("Here is ", fileUrls);
-      // 过滤掉空字符串，只保留成功上传的文件URL
-      formData.attachment = fileUrls.filter(url => url !== '');
-    }
-    console.log("result 22", formData);
+    // let formData = { ...values };
+    // if (values.attachment && values.attachment.length > 0) {
+    //   console.log("result 22");
+    //   // have issue, can't upload the file
+    //   const uploadPromises = values.attachment.map(file =>
+    //     file.originFileObj ? handleUpload(file.originFileObj) : Promise.resolve('')
+    //   );
+    //   const fileUrls = await Promise.all(uploadPromises);
+    //   console.log("Here is ", fileUrls);
+    //   // 过滤掉空字符串，只保留成功上传的文件URL
+    //   formData.attachment = fileUrls.filter(url => url !== '');
+    // }
+    // console.log("result 22", formData);
     const now = new Date();
     const ticketSupportID = `Ticket Support ID: ${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}`;
     
@@ -37,20 +35,19 @@ const TicketForm = ({ onSubmit }) => {
       Remote PC ID: ${values.remotePCID}
       Phone Extension: ${values.phoneExtension}
       Description: ${values.description}
-      附件URLs: ${formData.attachment.join(', ')}
-
+  
       Best regards,
       Your IT Support`
     };
     console.log("Here is the email data", emailData)
-    // try {
-    //   const response = await axios.post('https://vca5r6zcoc.execute-api.us-east-2.amazonaws.com/staging/sumbit', emailData);
-    //   console.log('Success:', response.data);
-    //   // 根据需要添加成功消息
-    // } catch (error) {
-    //   console.error('Failed to send email:', error);
-    //   // 根据需要添加失败消息
-    // }
+    try {
+      const response = await axios.post('https://vca5r6zcoc.execute-api.us-east-2.amazonaws.com/staging/sumbit', emailData);
+      console.log('Success:', response.data);
+      // 根据需要添加成功消息
+    } catch (error) {
+      console.error('Failed to send email:', error);
+      // 根据需要添加失败消息
+    }
     
   };
 
@@ -87,6 +84,7 @@ const TicketForm = ({ onSubmit }) => {
     }
   };
 
+
   const normFile =  (e) => {
     console.log('Upload event:', e);
     if (Array.isArray(e)) {
@@ -95,17 +93,6 @@ const TicketForm = ({ onSubmit }) => {
 
     return e?.fileList || [];
   
-    // // 确保fileList是一个数组。如果e.fileList不存在或不是数组，使用空数组作为默认值
-    // const fileList = Array.isArray(e?.fileList) ? e.fileList : [];
-    // console.log("hello here is norma File");
-    // // 使用.map和Promise.all处理文件上传，并等待所有上传操作完成
-    // const uploadPromises = fileList.map(file =>
-    //   file.originFileObj ? handleUpload(file.originFileObj) : Promise.resolve('')
-    // );
-    // const fileUrls = await Promise.all(uploadPromises);
-  
-    // // 过滤掉空字符串，只返回成功上传的文件URL
-    // return fileUrls.filter(url => url !== '');
   };
   
   /******************************************************************************** */
@@ -152,7 +139,6 @@ const TicketForm = ({ onSubmit }) => {
       >
         <Upload
           name="logo"
-          action="/upload.do"
           listType="picture"
           beforeUpload={beforeUpload} // 使用beforeUpload属性来限制文件类型
         >
