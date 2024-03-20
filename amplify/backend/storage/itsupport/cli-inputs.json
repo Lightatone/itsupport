@@ -1,0 +1,14 @@
+{
+  "resourceName": "itsupport",
+  "policyUUID": "0950a42f",
+  "bucketName": "itsupport012a7f4f2bc64606b334791345d29221",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "itsupportd7f7362d",
+  "groupAccess": {}
+}

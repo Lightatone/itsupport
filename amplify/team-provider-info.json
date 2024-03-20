@@ -12,14 +12,17 @@
       "AmplifyAppId": "d2cr42wzu3rdxs"
     },
     "categories": {
+      "auth": {
+        "itsupport2274d5ee": {}
+      },
       "function": {
         "itsupportd7f7362d": {
           "deploymentBucketName": "amplify-amplify67845c2a4ac44-staging-190300-deployment",
           "s3Key": "amplify-builds/itsupportd7f7362d-6b6f304f696a43617072-build.zip"
         }
       },
-      "api": {
-        "api59081bd4": {}
+      "storage": {
+        "itsupport": {}
       }
     }
   }
