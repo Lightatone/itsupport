@@ -30,7 +30,10 @@ const TicketForm = ({ onSubmit }) => {
     const now = new Date();
     const ticketSupportID = `Ticket Support ID: ${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}`;
     // 假设formData.attachment是一个包含多个URL信息的数组
-    let attachmentURLs = formData.attachment.map(a => `${a.origin}${a.pathname}`).join('\n');
+    let attachmentURLs = '';
+    if (formData.attachment && formData.attachment.length > 0) {
+      attachmentURLs = formData.attachment.map(a => `${a.origin}${a.pathname}`).join('\n');
+    }
 
     const emailData = {
       to: 'it@itsupportdesks.com', // 收件人地址
@@ -61,15 +64,20 @@ const TicketForm = ({ onSubmit }) => {
   /*********************************Attchement check and upload handle*********************************************** */
   
   const beforeUpload = (file) => {
-    const isDocOrPdf = file.type === 'application/pdf' || file.type === 'application/msword' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    if (!isDocOrPdf) {
-      message.error('You can only upload DOC or PDF file!');
+    const isAllowedType = file.type === 'application/pdf' ||
+                        file.type === 'application/msword' ||
+                        file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+                        file.type === 'image/jpeg' ||
+                        file.type === 'image/png' ||
+                        file.type === 'image/gif';   
+    if (!isAllowedType) {
+      message.error('You can only upload DOC, PDF, JPEG, PNG, or GIF files!');
     }
-    const isLessThan5M = file.size / 1024 / 1024 < 10;
-    if (!isLessThan5M) {
+    const isLessThan10M = file.size / 1024 / 1024 < 10;
+    if (!isLessThan10M) {
       message.error('File must be smaller than 10MB!');
     }
-    return isLessThan5M && isDocOrPdf || Upload.LIST_IGNORE; // 返回false或Upload.LIST_IGNORE将停止上传，但Upload.LIST_IGNORE不会显示错误信息
+    return isLessThan10M && isAllowedType || Upload.LIST_IGNORE; // 返回false或Upload.LIST_IGNORE将停止上传，但Upload.LIST_IGNORE不会显示错误信息
   };
 
   const handleUpload = async (file) => {
@@ -150,7 +158,7 @@ const TicketForm = ({ onSubmit }) => {
 
       <Form.Item
         name="attachment"
-        label="Attachment (Optional) PDF or Word, no more than 10MB"
+        label="Attachment (Optional) DOC, PDF, JPEG, PNG, or GIF files! no more than 10MB"
         valuePropName="fileList"
         getValueFromEvent={normFile}
       >

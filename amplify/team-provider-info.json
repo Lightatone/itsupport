@@ -19,14 +19,15 @@
       "function": {
         "itsupportd7f7362d": {
           "deploymentBucketName": "amplify-amplify67845c2a4ac44-staging-190300-deployment",
-          "s3Key": "amplify-builds/itsupportd7f7362d-6b6f304f696a43617072-build.zip"
+          "s3Key": "amplify-builds/itsupportd7f7362d-5044507674342f4c3464-build.zip"
         }
       },
       "storage": {
         "itsupport": {}
       },
       "api": {
-        "api59081bd4": {}
+        "api59081bd4": {},
+        "itsupport": {}
       }
     }
   }

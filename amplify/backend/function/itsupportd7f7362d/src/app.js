@@ -51,9 +51,11 @@ app.get('/sumbit/*', function(req, res) {
 /******************************************************EMAIL */
 // 引入AWS SDK
 const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
 
 // 设置区域
 AWS.config.update({region: 'us-east-2'}); // 根据你的SES配置调整区域
+const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 // 创建SES服务对象
 const ses = new AWS.SES();
@@ -84,17 +86,56 @@ app.post('/sumbit', function(req, res) {
       },
     Source: from, /* required */
   };
-
+  
   // 调用SES发送邮件
   ses.sendEmail(params, function(err, data) {
     if (err) {
       console.log(err, err.stack); // 错误日志
       res.json({error: 'Email could not be sent', details: err});
     } else {
-      console.log(data); // 成功的响应
-      res.json({success: 'Email sent successfully', data});
+      // 电子邮件发送成功，现在尝试存储电子邮件信息
+      console.log("working for save info");
+      storeEmailInformation({to, from, subject, body})
+        .then(storeRes => {
+          // 如果存储成功，返回电子邮件发送和存储都成功的响应
+          console.log('Failed to store email information:');
+          res.json({success: 'Email sent and stored successfully', storeRes});
+        })
+        .catch(storeErr => {
+          // 如果存储失败，只报告存储失败的错误
+          console.log('Failed to store email information:', storeErr);
+          // 这里选择返回的响应取决于你希望客户端如何处理这种情况
+          // 如果你希望客户端知道电子邮件发送成功，但存储失败，可以如下返回
+          res.json({warning: 'Email was sent, but information could not be stored', storeErr});
+        });
+
     }
   });
+  function storeEmailInformation(emailInfo) {
+    return new Promise((resolve, reject) => {
+      const dbParams = {
+        TableName: "Email",
+        Item: {
+          // 假设有一个主键叫emailId，这里我们简单用时间戳
+          emailId: `${Date.now()}`,
+          to: emailInfo.to,
+          from: emailInfo.from,
+          subject: emailInfo.subject,
+          body: emailInfo.body,   
+        }
+      };
+  
+      dynamoDB.put(dbParams, function(err, data) {
+        if (err) {
+          console.log("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+          reject(err);
+        } else {
+          console.log("Added item:", JSON.stringify(data, null, 2));
+          resolve(data);
+        }
+      });
+    });
+  }
 });
 
 /******************************************************EMAIL */
